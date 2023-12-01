@@ -12,9 +12,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: ${{ vars.PNPM_VERSION }}
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ vars.NODE_VERSION }}
@@ -33,9 +30,6 @@ jobs:
         with:
           fetch-depth: 0
       - uses: nrwl/nx-set-shas@v3
-      - uses: pnpm/action-setup@v2
-        with:
-          version: ${{ vars.PNPM_VERSION }}
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ vars.NODE_VERSION }}
