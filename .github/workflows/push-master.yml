@@ -2,7 +2,7 @@ name: 'Push Check'
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   lint:
     if: startsWith(github.event.head_commit.message, 'auto-increment:') != true
