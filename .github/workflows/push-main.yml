@@ -1,0 +1,54 @@
+name: 'Push Check'
+on:
+  push:
+    branches:
+      - main
+jobs:
+  lint:
+    if: startsWith(github.event.head_commit.message, 'auto-increment:') != true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ vars.PNPM_VERSION }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+      - name: set GITHUB_TOKEN
+        run: echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+      - run: npm install
+      - run: npm lint
+
+  publish:
+    if: startsWith(github.event.head_commit.message, 'auto-increment:') != true
+    needs:
+      - lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: nrwl/nx-set-shas@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: ${{ vars.PNPM_VERSION }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ vars.NODE_VERSION }}
+          registry-url: 'https://npm.pkg.github.com/'
+      - name: set GITHUB_TOKEN
+        run: echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+      - run: npm install
+      - run: npm version patch
+      - run: git add --all
+      - run: git commit -m 'auto-increment:release'
+      - run: git push --no-verify
+      - run: npm publish --access public

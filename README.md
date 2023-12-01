@@ -1,4 +1,4 @@
-# jest-runner-groups
+# jest-runner-groups-nx
 
 [![Version](https://img.shields.io/npm/v/jest-runner-groups.svg)](https://www.npmjs.com/package/jest-runner-groups)
 [![Downloads/week](https://img.shields.io/npm/dw/jest-runner-groups.svg)](https://www.npmjs.com/package/jest-runner-groups)

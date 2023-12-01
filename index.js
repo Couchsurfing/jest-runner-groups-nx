@@ -9,7 +9,7 @@ const ARG_PREFIX = '--group=';
 
 class GroupRunner extends TestRunner {
 
-	static getGroups( args ) {
+	static getGroupsFromCommandLine( args ) {
 		const include = [];
 		const exclude = [];
 
@@ -28,6 +28,17 @@ class GroupRunner extends TestRunner {
 			include,
 			exclude,
 		};
+	}
+
+	static getGroupsFromEnv( env ) {
+		// Helper function to convert comma-delimited string to a Set
+		const toSet = ( str ) => new Set( str ? str.split( ',' ) : [] );
+
+		// Extracting and converting the environment variables to Sets
+		const include = toSet( env.JEST_GROUPS_INCLUDE );
+		const exclude = toSet( env.JEST_GROUPS_EXCLUDE );
+
+		return { include, exclude };
 	}
 
 	static filterTest( { include, exclude }, test ) {
@@ -54,7 +65,13 @@ class GroupRunner extends TestRunner {
 	}
 
 	runTests( tests, watcher, onStart, onResult, onFailure, options ) {
-		const groups = GroupRunner.getGroups( process.argv );
+		const groupsCli = GroupRunner.getGroupsFromCommandLine( process.argv );
+		const groupsEnv = GroupRunner.getGroupsFromEnv( process.env );
+
+		const groups = {
+			include: [...groupsCli.include, ...groupsEnv.include],
+			exclude: [...groupsCli.exclude, ...groupsEnv.exclude],
+		};
 
 		groups.include.forEach( ( group ) => {
 			if ( groups.exclude.includes( group ) ) {
