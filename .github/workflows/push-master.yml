@@ -41,7 +41,7 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
       - run: npm install
-      - run: npm version patch
+      - run: npm version patch --no-git-tag-version
       - run: git add --all
       - run: git commit -m 'auto-increment:release'
       - run: git push --no-verify
